@@ -1,0 +1,28 @@
+name: 'fprime-publish-pypi-package'
+description: 'Publish an F´ PYPI Package'
+author: 'F´'
+inputs:
+  package:
+    description: "Package name to publish"
+    required: true
+  location:
+    description: "Directory containing setup.py"
+    required: true
+    default: $GITHUB_WORKSPACE
+  steps:
+    description: "Space-separated list of python build steps"
+    required: true
+    default: "sdist bdist_wheel"
+  repo:
+    description: "pypi or testpypi"
+    required: true
+    default: "testpypi"
+runs:
+  using: "composite"
+  steps:
+  - run: pip3 install -U pip wheel setuptools setuptools_scm twine
+    shell: bash
+  - run: |
+      cd ${{ inputs.location }}
+      $GITHUB_ACTION_PATH/package "${{ inputs.package }}" "${{ inputs.repo }}" ${{ inputs.steps }}
+    shell: bash
